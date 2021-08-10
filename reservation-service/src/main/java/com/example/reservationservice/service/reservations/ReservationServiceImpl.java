@@ -7,6 +7,7 @@ import com.example.reservationservice.model.reservations.PayStatus;
 import com.example.reservationservice.model.reservations.Reservation;
 import com.example.reservationservice.model.reservations.ReservationCreateArg;
 import com.example.reservationservice.repository.reservations.ReservationRepository;
+import com.example.reservationservice.service.receipt.ReceiptService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
