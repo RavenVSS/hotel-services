@@ -7,6 +7,7 @@ import com.example.userservice.service.users.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,6 +21,7 @@ public class UserController {
     private final UserMapper userMapper;
 
     @PostMapping("registration")
+    @PreAuthorize("permitAll()")
     @ResponseStatus(value = HttpStatus.CREATED)
     public void addNewUser(@RequestBody UserCreateDto userCreateDto) {
         UserCreateArg userCreateArg = userMapper.fromDto(userCreateDto);
@@ -27,6 +29,7 @@ public class UserController {
     }
 
     @GetMapping("current")
+    @PreAuthorize("hasRole('WORKER') || hasRole('USER')")
     @ResponseStatus(value = HttpStatus.OK)
     //TODO add current user
     public UserDto getCurrentUser() {
@@ -34,12 +37,14 @@ public class UserController {
     }
 
     @GetMapping("confirm")@ResponseStatus(value = HttpStatus.OK)
+    @PreAuthorize("permitAll()")
     public void confirmEmail(@RequestParam("hash") String hash,
                              @RequestParam("id") Integer id) {
         userService.confirm(hash, id);
     }
 
     @GetMapping("{id}")@ResponseStatus(value = HttpStatus.OK)
+    @PreAuthorize("hasRole('WORKER')")
     public UserDto getAtUser(@PathVariable("id") Integer id) {
         return userMapper.toDto(userService.findAt(id));
     }
@@ -51,6 +56,7 @@ public class UserController {
     }
 
     @GetMapping("search/login")
+    @PreAuthorize("hasRole('WORKER')")
     @ResponseStatus(value = HttpStatus.OK)
     public UserDto getUserByName(@RequestParam("login") String login) {
         return userMapper.toDto(userService.findByLogin(login));
