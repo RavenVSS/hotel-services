@@ -1,4 +1,4 @@
-package com.example.roomservice.controller.dto.in;
+package com.example.roomservice.controller.rooms.dto.in;
 
 import com.example.roomservice.model.rooms.AvailableStatus;
 import lombok.AllArgsConstructor;

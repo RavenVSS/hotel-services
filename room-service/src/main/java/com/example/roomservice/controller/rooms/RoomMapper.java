@@ -1,7 +1,7 @@
-package com.example.roomservice.controller;
+package com.example.roomservice.controller.rooms;
 
-import com.example.roomservice.controller.dto.in.RoomCreateDto;
-import com.example.roomservice.controller.dto.out.RoomDto;
+import com.example.roomservice.controller.rooms.dto.in.RoomCreateDto;
+import com.example.roomservice.controller.rooms.dto.out.RoomDto;
 import com.example.roomservice.model.rooms.Room;
 import com.example.roomservice.model.rooms.RoomCreateArg;
 import org.mapstruct.Mapper;

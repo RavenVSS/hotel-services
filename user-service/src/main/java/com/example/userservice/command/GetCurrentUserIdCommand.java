@@ -2,7 +2,6 @@ package com.example.userservice.command;
 
 import com.example.userservice.command.core.Command;
 import com.example.userservice.config.CustomPrincipal;
-import com.example.userservice.config.UserCustom;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;

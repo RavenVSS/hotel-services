@@ -7,7 +7,6 @@ import com.example.userservice.model.users.UserCreateArg;
 import com.example.userservice.model.users.UserTypes;
 import com.example.userservice.repository.users.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

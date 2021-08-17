@@ -1,7 +1,7 @@
-package com.example.roomservice.controller;
+package com.example.roomservice.controller.rooms;
 
-import com.example.roomservice.controller.dto.in.RoomCreateDto;
-import com.example.roomservice.controller.dto.out.RoomDto;
+import com.example.roomservice.controller.rooms.dto.in.RoomCreateDto;
+import com.example.roomservice.controller.rooms.dto.out.RoomDto;
 import com.example.roomservice.model.rooms.Room;
 import com.example.roomservice.model.rooms.RoomCreateArg;
 import com.example.roomservice.service.rooms.RoomService;
@@ -10,7 +10,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;

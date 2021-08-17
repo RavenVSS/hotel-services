@@ -1,5 +1,6 @@
 package com.example.userservice.controller.users;
 
+import com.example.userservice.command.GetCurrentUserIdCommand;
 import com.example.userservice.controller.users.dto.in.UserCreateDto;
 import com.example.userservice.controller.users.dto.out.UserDto;
 import com.example.userservice.model.users.UserCreateArg;
@@ -20,6 +21,8 @@ public class UserController {
     private final UserService userService;
     private final UserMapper userMapper;
 
+    private final GetCurrentUserIdCommand getCurrentUserIdCommand;
+
     @PostMapping("registration")
     @PreAuthorize("permitAll()")
     @ResponseStatus(value = HttpStatus.CREATED)
@@ -31,9 +34,8 @@ public class UserController {
     @GetMapping("current")
     @PreAuthorize("hasRole('WORKER') || hasRole('USER')")
     @ResponseStatus(value = HttpStatus.OK)
-    //TODO add current user
     public UserDto getCurrentUser() {
-        return userMapper.toDto(userService.findAt(17));
+        return userMapper.toDto(userService.findAt(getCurrentUserIdCommand.execute(null)));
     }
 
     @GetMapping("confirm")@ResponseStatus(value = HttpStatus.OK)
