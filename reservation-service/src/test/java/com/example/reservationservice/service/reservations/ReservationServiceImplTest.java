@@ -6,17 +6,19 @@ import com.example.reservationservice.model.reservations.PayStatus;
 import com.example.reservationservice.model.reservations.Reservation;
 import com.example.reservationservice.model.reservations.ReservationCreateArg;
 import com.example.reservationservice.model.users.User;
-import com.example.reservationservice.model.users.UserTypes;
 import com.example.reservationservice.repository.reservations.ReservationRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.*;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -48,7 +50,7 @@ class ReservationServiceImplTest {
                 .money(1000)
                 .paymentMethodId(1)
                 .payStatus(PayStatus.PAID)
-                .receipt(0000)
+                .receipt(1000)
                 .roomId(1)
                 .workerId(2)
                 .build();
@@ -62,7 +64,7 @@ class ReservationServiceImplTest {
                 .money(1000)
                 .paymentMethodId(1)
                 .payStatus(PayStatus.PAID)
-                .receipt(0000)
+                .receipt(1000)
                 .roomId(1)
                 .workerId(2)
                 .build();
@@ -72,44 +74,62 @@ class ReservationServiceImplTest {
 
     @Test
     void create() {
-        User user = User.builder()
-                .userId(1)
-                .email("qwe@mail.ru")
-                .firstName("qwe")
-                .login("qwe")
-                .middleName("qwe")
-                .phone("89991111234")
-                .regDate(new Date())
-                .secondName("qwe")
-                .type(UserTypes.ROLE_WORKER)
-                .build();
-        Mockito.when(userFeignService.getCurrentUser())
+        // Arrange
+        User user = Mockito.mock(User.class);
+        when(user.getUserId())
+                .thenReturn(1);
+
+        ArgumentCaptor<Reservation> argument = ArgumentCaptor.forClass(Reservation.class);
+        when(userFeignService.getCurrentUser())
                 .thenReturn(user);
-        Mockito.when(reservationRepository.save(any(Reservation.class)))
+        when(reservationRepository.save(argument.capture()))
                 .thenReturn(expected);
+
+        // Act
         reservationService.create(reservationCreateArg);
 
-        Mockito.verify(reservationRepository).save(any(Reservation.class));
+        // Assert
+        Reservation actual = argument.getValue();
+        assertEquals(Integer.valueOf(1), actual.getPaymentMethodId());
+        assertEquals(ActualStatus.ACTUAL, actual.getActualStatus());
+        assertEquals(Integer.valueOf(1), actual.getGuestId());
+        assertEquals(Integer.valueOf(1000), actual.getMoney());
+        assertEquals(Integer.valueOf(1000), actual.getReceipt());
+        assertEquals(Integer.valueOf(1), actual.getRoomId());
+        assertEquals(Integer.valueOf(1), actual.getWorkerId());
+        assertEquals(PayStatus.PAID, actual.getPayStatus());
+        assertEquals(new Date(1234567L), actual.getBeginDate());
+        assertEquals(new Date(1234567L), actual.getEndDate());
+        assertEquals("Test", actual.getComment());
     }
 
     @Test
     void delete() {
-        Mockito.when(reservationRepository.findById(expected.getId()))
+        // Arrange
+        when(reservationRepository.findById(expected.getId()))
                 .thenReturn(Optional.of(expected));
+
+        // Act
         reservationService.delete(expected.getId());
-        Mockito.verify(reservationRepository).deleteById(any());
+
+        // Assert
+        verify(reservationRepository).deleteById(any());
     }
 
     @Test
     void findAt() {
-        Mockito.when(reservationRepository.findById(expected.getId()))
+        // Arrange
+        when(reservationRepository.findById(expected.getId()))
                 .thenReturn(Optional.of(expected));
+
+        // Act & Assert
         assertThat(reservationService.findAt(expected.getId())).isEqualTo(expected);
     }
 
     @Test
     void update() {
-        Mockito.when(reservationRepository.findById(expected.getId()))
+        // Arrange
+        when(reservationRepository.findById(expected.getId()))
                 .thenReturn(Optional.of(expected));
         ReservationCreateArg reservationCreateArgUpdate = ReservationCreateArg.builder()
                 .actualStatus(ActualStatus.ACTUAL)
@@ -140,13 +160,16 @@ class ReservationServiceImplTest {
                 .workerId(2)
                 .build();
 
+        // Act
         reservationService.update(reservationCreateArgUpdate, 1);
 
+        // Assert
         assertThat(reservationService.findAt(1)).isEqualTo(expectedUpdate);
     }
 
     @Test
     void findAll() {
+        // Arrange
         Reservation expectedTwo = Reservation.builder()
                 .actualStatus(ActualStatus.ACTUAL)
                 .beginDate(new Date(1234567L))
@@ -164,42 +187,49 @@ class ReservationServiceImplTest {
         List<Reservation> expectedList = new ArrayList<>();
         expectedList.add(expected);
         expectedList.add(expectedTwo);
-        Mockito.when(reservationRepository.findAll())
+        when(reservationRepository.findAll())
                 .thenReturn(expectedList);
 
+        // Act & Assert
         assertThat(reservationService.findAll()).isEqualTo(expectedList);
     }
 
     @Test
     void findByBeginDate() {
+        // Arrange
         List<Reservation> expectedList = new ArrayList<>();
         expectedList.add(expected);
-        Mockito.when(reservationRepository.findByBeginDate(new Date(1234569L)))
+        when(reservationRepository.findByBeginDate(new Date(1234569L)))
                 .thenReturn(expectedList);
 
+        // Act & Assert
         assertThat(reservationService.findByBeginDate(new Date(1234569L))).isEqualTo(expectedList);
     }
 
     @Test
     void findByName() {
+        // Arrange
         List<Reservation> expectedList = new ArrayList<>();
         expectedList.add(expected);
 
-        Mockito.when(reservationRepository.findByName("Иван", "Иванов"))
+        when(reservationRepository.findByName("Иван", "Иванов"))
                 .thenReturn(expectedList);
 
+        // Act & Assert
         assertThat(reservationService.findByName("Иван", "Иванов"))
                 .isEqualTo(expectedList);
     }
 
     @Test
     void findByGuestId() {
+        // Arrange
         List<Reservation> expectedList = new ArrayList<>();
         expectedList.add(expected);
 
-        Mockito.when(reservationRepository.findByGuestId(1))
+        when(reservationRepository.findByGuestId(1))
                 .thenReturn(expectedList);
 
+        // Act & Assert
         assertThat(reservationService.findByGuestId(1))
                 .isEqualTo(expectedList);
     }
