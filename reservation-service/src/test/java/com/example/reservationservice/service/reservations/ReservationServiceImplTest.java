@@ -16,8 +16,8 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
-import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 import java.util.ArrayList;
@@ -167,7 +167,7 @@ class ReservationServiceImplTest {
                 .money(1000)
                 .paymentMethodId(1)
                 .payStatus(PayStatus.PAID)
-                .receipt(0000)
+                .receipt(1000)
                 .roomId(1)
                 .workerId(2)
                 .build();
