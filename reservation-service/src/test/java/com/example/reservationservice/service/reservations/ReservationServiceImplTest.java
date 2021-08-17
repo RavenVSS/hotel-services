@@ -129,42 +129,29 @@ class ReservationServiceImplTest {
     @Test
     void update() {
         // Arrange
-        when(reservationRepository.findById(expected.getId()))
-                .thenReturn(Optional.of(expected));
-        ReservationCreateArg reservationCreateArgUpdate = ReservationCreateArg.builder()
-                .actualStatus(ActualStatus.ACTUAL)
-                .beginDate(new Date(1234567L))
-                .endDate(new Date(1234567L))
-                .comment("Update")
-                .guestId(1)
-                .money(1000)
-                .paymentMethodId(1)
-                .payStatus(PayStatus.PAID)
-                .receipt(0000)
-                .roomId(1)
-                .workerId(2)
-                .build();
+        ArgumentCaptor<Reservation> argument = ArgumentCaptor.forClass(Reservation.class);
 
-        Reservation expectedUpdate = Reservation.builder()
-                .actualStatus(ActualStatus.ACTUAL)
-                .beginDate(new Date(1234567L))
-                .endDate(new Date(1234567L))
-                .comment("Update")
-                .guestId(1)
-                .id(1)
-                .money(1000)
-                .paymentMethodId(1)
-                .payStatus(PayStatus.PAID)
-                .receipt(0000)
-                .roomId(1)
-                .workerId(2)
-                .build();
+        when(reservationRepository.findById(1))
+                .thenReturn(Optional.of(expected));
+        when(reservationRepository.save(argument.capture()))
+                .thenReturn(expected);
 
         // Act
-        reservationService.update(reservationCreateArgUpdate, 1);
+        reservationService.update(reservationCreateArg, 1);
 
         // Assert
-        assertThat(reservationService.findAt(1)).isEqualTo(expectedUpdate);
+        Reservation actual = argument.getValue();
+        assertEquals(Integer.valueOf(1), actual.getPaymentMethodId());
+        assertEquals(ActualStatus.ACTUAL, actual.getActualStatus());
+        assertEquals(Integer.valueOf(1), actual.getGuestId());
+        assertEquals(Integer.valueOf(1000), actual.getMoney());
+        assertEquals(Integer.valueOf(1000), actual.getReceipt());
+        assertEquals(Integer.valueOf(1), actual.getRoomId());
+        assertEquals(Integer.valueOf(2), actual.getWorkerId());
+        assertEquals(PayStatus.PAID, actual.getPayStatus());
+        assertEquals(new Date(1234567L), actual.getBeginDate());
+        assertEquals(new Date(1234567L), actual.getEndDate());
+        assertEquals("Test", actual.getComment());
     }
 
     @Test
